@@ -67,16 +67,18 @@ class Main(tk.Frame):
         # добавляем параметры колонкам
         # width - ширина
         # anchor - выравнивание текста в ячейке
-        self.tree.column("ID", width=30, anchor=tk.CENTER)
-        self.tree.column("name", width=300, anchor=tk.CENTER)
-        self.tree.column("tel", width=150, anchor=tk.CENTER)
-        self.tree.column("email", width=150, anchor=tk.CENTER)
+        self.tree.column("ID", width=30, anchor=tk.CENTER)         
+        self.tree.column("name", width=300, anchor=tk.CENTER)       
+        self.tree.column("tel", width=150, anchor=tk.CENTER)        
+        self.tree.column("email", width=150, anchor=tk.CENTER)      
+        
 
         # подписи колонок
         self.tree.heading("ID", text='ID')
         self.tree.heading("name", text='ФИО')
         self.tree.heading("tel", text='Телефон')
         self.tree.heading("email", text='E-mail')
+        
 
         # упаковка
         self.tree.pack(side=tk.LEFT)
@@ -86,14 +88,14 @@ class Main(tk.Frame):
         self.tree.configure(yscrollcommand=scroll.set)
 
     # добавление данных
-    def records(self, name, tel, email):
-        self.db.insert_data(name, tel, email)
+    def records(self, name, tel, email, sallary):
+        self.db.insert_data(name, tel, email, sallary)
         self.view_records()
 
     # обновление (изменение) данных
-    def update_record(self, name, tel, email):
+    def update_record(self, name, tel, email, sallary):
         self.db.c.execute('''UPDATE db SET name=?, tel=?, email=? WHERE ID=?''',
-                          (name, tel, email, self.tree.set(self.tree.selection()[0], '#1')))
+                          (name, tel, email, sallary, self.tree.set(self.tree.selection()[0], '#1')))
         self.db.conn.commit()
         self.view_records()
 
@@ -168,6 +170,7 @@ class Child(tk.Toplevel):
         label_select.place(x=50, y=80)
         label_sum = tk.Label(self, text='E-mail')
         label_sum.place(x=50, y=110)
+        
 
         # добавляем строку ввода для наименования
         self.entry_name = ttk.Entry(self)
@@ -227,6 +230,7 @@ class Update(Child):
         self.entry_name.insert(0, row[1])
         self.entry_email.insert(0, row[2])
         self.entry_tel.insert(0, row[3])
+        
 
 
 # класс поиска записи
@@ -272,8 +276,8 @@ class DB:
         self.conn.commit()
 
     # метод добавления в БД
-    def insert_data(self, name, tel, email):
-        self.c.execute('''INSERT INTO db (name, tel, email) VALUES (?, ?, ?)''',
+    def insert_data(self, name, tel, email, sallary):
+        self.c.execute('''INSERT INTO db (name, tel, email) VALUES (?, ?, ?, ?)''',
                        (name, tel, email))
         self.conn.commit()
 
